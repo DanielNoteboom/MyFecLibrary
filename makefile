@@ -23,7 +23,6 @@ SHARED_LIB=libfec.so
 
 all: libfec.a $(SHARED_LIB)
 	
-myCode: myCode
 test:  vtest27 vtest29 vtest39 vtest615 rstest dtest sumsq_test peaktest
 	@echo "Correctness tests:"
 	./vtest27 -e 3.0 -n 1000 -v
@@ -62,6 +61,8 @@ dtest: dtest.o libfec.a
 
 myCode: myCode.o libfec.a
 	gcc $(CFLAGS) -g -o $@ $^ -lm
+easyViterbi: testEasyViterbi.o easyViterbi.o libfec.a
+	gcc $(CFLAGS) -g -o $@ $^ -lm
 
 vtest27: vtest27.o libfec.a
 	gcc $(CFLAGS) -g -o $@ $^ -lm
@@ -84,6 +85,8 @@ rs_speedtest: rs_speedtest.o libfec.a
 # for some reason, the test programs without args segfault on the PPC with -O2 optimization. Dunno why - compiler bug?
 
 myCode.o: myCode.c fec.h
+	gcc $(CFLAGS) -g -c $<
+testEasyViterbi.o: testEasyViterbi.c easyViterbi.c fec.h
 	gcc $(CFLAGS) -g -c $<
 
 vtest27.o: vtest27.c fec.h
@@ -248,7 +251,7 @@ cpu_mode_ppc.o: cpu_mode_ppc.c fec.h
 
 
 clean:
-	rm -f *.o $(SHARED_LIB) *.a rs_speedtest peaktest sumsq_test dtest myCode vtest27 vtest29 vtest39 vtest615 rstest ccsds_tab.c ccsds_tal.c gen_ccsds gen_ccsds_tal core
+	rm -f *.o $(SHARED_LIB) *.a rs_speedtest peaktest sumsq_test dtest easyViterbi myCode vtest27 vtest29 vtest39 vtest615 rstest ccsds_tab.c ccsds_tal.c gen_ccsds gen_ccsds_tal core
 	rm -rf autom4te.cache
 
 distclean: clean
